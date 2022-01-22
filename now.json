@@ -2,7 +2,6 @@
     "name": "blogserver",
     "version": 2,
     "alias": "blogserver",
-    "builds": [{ "src": "app.js", "use": "@vercel/node" }],
     "routes": [
         {
           "src": "/*",
