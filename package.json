@@ -1,8 +1,8 @@
 {
-  "name": "Record-Shop-Live-Coding",
+  "name": "blogging-app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js"
