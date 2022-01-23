@@ -48,6 +48,9 @@ let ImageBucket;
 //create mongoose connection
 mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true}, () => {
   console.log("connection established ....... with mongo");
+  ImageBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+    bucketName: process.env.DB_BUCKET,
+  });
 });
 
 //image checker middleware
@@ -80,9 +83,6 @@ app.get("/verifytoken", authentication, (req, res, next) => {
   res.send({ success: true, data: user });
 });
 app.get("/images/:filename",(req,res,next)=>{
-  ImageBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-    bucketName: process.env.DB_BUCKET,
-  });
     ImageBucket.openDownloadStreamByName(req.params.filename).pipe(res)
 })
 
