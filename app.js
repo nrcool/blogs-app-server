@@ -23,18 +23,22 @@ const storage = new GridFsStorage({
   url: process.env.MONGO_URI,
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => {
+    return new Promise((resolve, reject) => {
       const match = ["image/png", "image/jpeg"];
-
       if (match.indexOf(file.mimetype) === -1) {
-          const filename = `${Date.now()}_blogapp_${file.originalname}`;
-          return filename;
-      }
+        reject("You can upload jpeg or png images only")
+    }else{
+      resolve(
+       { bucketName: process.env.DB_BUCKET,
+        filename: `${Date.now()}_blogapp_${file.originalname}`}
+      )
+    }
 
-      return {
-          bucketName: process.env.DB_BUCKET,
-          filename: `${Date.now()}_blogapp_${file.originalname}`,
-      };
-  },
+
+     
+  
+    });
+  }
 });
 const upload = multer({ storage });
 //set Port
