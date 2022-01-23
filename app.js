@@ -55,7 +55,7 @@ mongoose.connect(process.env.MONGO_URI,{dbName: process.env.DB_NAME}, () => {
 function imageStore(req, res, next) {
   console.log(req.url);
   if (req.file) {
-    req.body.image=`https://${req.headers.host}/images/${req.file.filename}`
+    req.body.image=`https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/images/${req.file.filename}`
     next();
   } else {
     next();
