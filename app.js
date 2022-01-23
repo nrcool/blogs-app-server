@@ -16,7 +16,7 @@ const fs = require("fs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //cors middleware
-app.use(cors({ origin: "*", exposedHeaders: ["token"] }));
+app.use(cors({ origin: "https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/", exposedHeaders: ["token"] }));
 app.use(cookieParser());
 
 const storage = multer.diskStorage({
