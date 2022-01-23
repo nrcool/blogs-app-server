@@ -67,10 +67,10 @@ function imageStore(req, res, next) {
 //index route
 app.use("/", indexRoute);
 //users route
-app.use("/users", upload.single("image"), usersRoute);
+app.use("/users", upload.single("image"),imageStore, usersRoute);
 
 //records route
-app.use("/blogs",upload.single("image"), blogsRoute);
+app.use("/blogs",upload.single("image"),imageStore, blogsRoute);
 
 //orders route
 app.use("/comments", commentsRoute);
