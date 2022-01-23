@@ -28,13 +28,13 @@ const storage = new GridFsStorage({
       const match = ["image/png", "image/jpeg"];
 
       if (match.indexOf(file.mimetype) === -1) {
-          const filename = `https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/images/${Date.now()}-blogapp-${file.originalname}`;
+          const filename = `${Date.now()}-blogapp-${file.originalname}`;
           return filename;
       }
 
       return {
           bucketName: process.env.DB_BUCKET,
-          filename: `https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/images/${Date.now()}-blogapp-${file.originalname}`,
+          filename: `${Date.now()}-blogapp-${file.originalname}`,
       };
   },
 });
@@ -52,18 +52,15 @@ mongoose.connect(process.env.MONGO_URI,{dbName: process.env.DB_NAME}, () => {
 });
 
 //image checker middleware
-/* function imageStore(req, res, next) {
+function imageStore(req, res, next) {
   console.log(req.url);
   if (req.file) {
-    const readFile = fs.createReadStream(__dirname+`/public/images/${req.file.filename}`);
-    const writeStream = ImageBucket.openUploadStream(`${req.file.filename}`);
-    readFile.pipe(writeStream);
-    req.body.image = `https://blogs-app-server-r8ko24yka-nrcool.vercel.app/images/${req.file.filename}`;
+    req.body.image=`https://${req.headers.host}/images/${req.file.filename}`
     next();
   } else {
     next();
   }
-} */
+}
 
 //server static files
 /* app.use(express.static(__dirname+"/build"))  */

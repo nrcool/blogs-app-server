@@ -32,7 +32,7 @@ try{
 //Create new Blog
 router.post("/",authentication, async (req, res,next) => {
   try{
-    const blog = new BlogsCollection({...req.body,image:req.file.filename})
+    const blog = new BlogsCollection(req.body)
     await blog.save()
     const user=await UsersCollection.findById(blog.userid)
     if(!user.blogs){
