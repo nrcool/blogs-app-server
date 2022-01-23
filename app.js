@@ -12,6 +12,7 @@ const cookieParser = require("cookie-parser");
 const authentication = require("./middlewares/auth");
 const multer = require("multer");
 const fs = require("fs");
+const path =require("path")
 //express middleware to parsing json data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -21,7 +22,7 @@ app.use(cookieParser());
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, require.main?.path + "/" +" public/images/ ");
+    cb(null,path.resolve(__dirname,"public","images"));
   },
   filename: (req, file, cb) => {
     if (
