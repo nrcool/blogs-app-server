@@ -12,8 +12,6 @@ const {GridFsStorage} = require("multer-gridfs-storage");
 const cookieParser = require("cookie-parser");
 const authentication = require("./middlewares/auth");
 const multer = require("multer");
-const fs = require("fs");
-const path =require("path")
 //express middleware to parsing json data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
