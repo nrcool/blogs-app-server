@@ -8,6 +8,7 @@ const indexRoute = require("./routes/indexRoute");
 const usersRoute = require("./routes/usersRoute");
 const blogsRoute = require("./routes/blogsRoute");
 const commentsRoute = require("./routes/commentsRoute");
+const GridFsStorage = require("multer-gridfs-storage");
 const cookieParser = require("cookie-parser");
 const authentication = require("./middlewares/auth");
 const multer = require("multer");
@@ -20,20 +21,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/", exposedHeaders: ["token"] }));
 app.use(cookieParser());
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null,path.resolve(__dirname,"public","images"));
-  },
-  filename: (req, file, cb) => {
-    if (
-      file.mimetype === "image/jpeg" ||
-      file.mimetype === "image/jpg" ||
-      file.mimetype === "image/png"
-    ) {
-      cb(null, `${new Date().getTime()}_${file.originalname}`);
-    } else {
-      cb({ message: "don't support such file format" });
-    }
+const storage = new GridFsStorage({
+  url: `${process.env.MONGO_URI}/${process.env.DB_NAME}`,
+  options: { useNewUrlParser: true, useUnifiedTopology: true },
+  file: (req, file) => {
+      const match = ["image/png", "image/jpeg"];
+
+      if (match.indexOf(file.mimetype) === -1) {
+          const filename = `https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/${Date.now()}-blogapp-${file.originalname}`;
+          return filename;
+      }
+
+      return {
+          bucketName: process.env.DB_BUCKET,
+          filename: `https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/${Date.now()}-blogapp-${file.originalname}`,
+      };
   },
 });
 const upload = multer({ storage });
@@ -50,7 +52,7 @@ mongoose.connect(process.env.MONGO_URI,{dbName: process.env.DB_NAME}, () => {
 });
 
 //image checker middleware
-function imageStore(req, res, next) {
+/* function imageStore(req, res, next) {
   console.log(req.url);
   if (req.file) {
     const readFile = fs.createReadStream(__dirname+`/public/images/${req.file.filename}`);
@@ -61,17 +63,17 @@ function imageStore(req, res, next) {
   } else {
     next();
   }
-}
+} */
 
 //server static files
 /* app.use(express.static(__dirname+"/build"))  */
 //index route
 app.use("/", indexRoute);
 //users route
-app.use("/users", upload.single("image"), imageStore, usersRoute);
+app.use("/users", upload.single("image"), usersRoute);
 
 //records route
-app.use("/blogs",upload.single("image"), imageStore, blogsRoute);
+app.use("/blogs",upload.single("image"), blogsRoute);
 
 //orders route
 app.use("/comments", commentsRoute);
