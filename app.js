@@ -20,7 +20,7 @@ app.use(cors({ origin: "https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/", 
 app.use(cookieParser());
 
 const storage = new GridFsStorage({
-  url: `${process.env.MONGO_URI}/${process.env.DB_NAME}`,
+  url: process.env.MONGO_URI,
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => {
       const match = ["image/png", "image/jpeg"];
@@ -42,7 +42,7 @@ const PORT = process.env.PORT || 4000;
 
 let ImageBucket;
 //create mongoose connection
-mongoose.connect(process.env.MONGO_URI,{dbName: process.env.DB_NAME}, () => {
+mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true}, () => {
   console.log("connection established ....... with mongo");
   ImageBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
     bucketName: process.env.DB_BUCKET,
