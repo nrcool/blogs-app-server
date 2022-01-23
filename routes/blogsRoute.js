@@ -35,7 +35,12 @@ router.post("/",authentication, async (req, res,next) => {
     const blog = new BlogsCollection(req.body)
     await blog.save()
     const user=await UsersCollection.findById(blog.userid)
-    await user.blogs.push(blog._id)
+    if(!user.blogs){
+      user.blogs=[]
+    }
+    user.blogs.push(blog._id)
+   await user.save()
+    
     res.json({success:true, data:blog });
   }
   catch(err){

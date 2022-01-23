@@ -21,7 +21,7 @@ app.use(cookieParser());
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./images");
+    cb(null, "images/");
   },
   filename: (req, file, cb) => {
     if (
@@ -52,7 +52,7 @@ mongoose.connect(process.env.MONGO_URI,{dbName: process.env.DB_NAME}, () => {
 function imageStore(req, res, next) {
   console.log(req.url);
   if (req.file) {
-    const readFile = fs.createReadStream(`./images/${req.file.filename}`);
+    const readFile = fs.createReadStream(__dirname+`/images/${req.file.filename}`);
     const writeStream = ImageBucket.openUploadStream(`${req.file.filename}`);
     readFile.pipe(writeStream);
     req.body.image = `https://blogs-app-server-r8ko24yka-nrcool.vercel.app/images/${req.file.filename}`;
