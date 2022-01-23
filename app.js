@@ -55,7 +55,7 @@ function imageStore(req, res, next) {
     const readFile = fs.createReadStream(`./images/${req.file.filename}`);
     const writeStream = ImageBucket.openUploadStream(`${req.file.filename}`);
     readFile.pipe(writeStream);
-    req.body.image = `http://${req.headers.host}/images/${req.file.filename}`;
+    req.body.image = `https://blogs-app-server-r8ko24yka-nrcool.vercel.app/images/${req.file.filename}`;
     next();
   } else {
     next();
