@@ -28,13 +28,13 @@ const storage = new GridFsStorage({
       const match = ["image/png", "image/jpeg"];
 
       if (match.indexOf(file.mimetype) === -1) {
-          const filename = `https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/${Date.now()}-blogapp-${file.originalname}`;
+          const filename = `https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/images/${Date.now()}-blogapp-${file.originalname}`;
           return filename;
       }
 
       return {
           bucketName: process.env.DB_BUCKET,
-          filename: `https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/${Date.now()}-blogapp-${file.originalname}`,
+          filename: `https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/images/${Date.now()}-blogapp-${file.originalname}`,
       };
   },
 });
