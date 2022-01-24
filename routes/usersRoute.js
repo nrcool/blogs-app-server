@@ -106,7 +106,7 @@ router.post("/login",async (req,res,next)=>{
     const check = bcrypt.compareSync(password , user.password)
     console.log(check)
     if(check){
-      const token = jwt.sign({email:email, id:user._id},process.env.SECRET_KEY,{expiresIn:"1h",issuer:"Naqvi",audience:"fbw-e04-2"} )
+      const token = jwt.sign({email:email, id:user._id},process.env.SECRET_KEY,{expiresIn:"24h",issuer:"Naqvi",audience:"fbw-e04-2"} )
 
       console.log(token)
       user.token= token;

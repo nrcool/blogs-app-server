@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-require("dotenv").config()
+require("dotenv").config();
 //create express server
 const app = express();
 const cors = require("cors");
@@ -8,53 +8,45 @@ const indexRoute = require("./routes/indexRoute");
 const usersRoute = require("./routes/usersRoute");
 const blogsRoute = require("./routes/blogsRoute");
 const commentsRoute = require("./routes/commentsRoute");
-const {GridFsStorage} = require("multer-gridfs-storage");
+const ImagesCollection = require("./models/ImageSchema");
 const cookieParser = require("cookie-parser");
 const authentication = require("./middlewares/auth");
-const multer = require("multer");
+const fileUpload = require("express-fileupload");
+const stream = require("stream")
 //express middleware to parsing json data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(fileUpload());
 //cors middleware
-app.use(cors({ origin: "https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/", exposedHeaders: ["token"] }));
+app.use(
+  cors({
+    origin: "https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/",
+    exposedHeaders: ["token"],
+  })
+);
 app.use(cookieParser());
 
-const storage = new GridFsStorage({
-  url: process.env.MONGO_URI,
-  options: { useNewUrlParser: true, useUnifiedTopology: true },
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      const match = ["image/png", "image/jpeg"];
-      if (match.indexOf(file.mimetype) === -1) {
-        reject("You can upload jpeg or png images only")
-    }else{
-      resolve(
-       { bucketName: process.env.DB_BUCKET,
-        filename: `${Date.now()}_blogapp_${file.originalname}`}
-      )
-    }
-
-
-     
-  
-    });
-  }
-});
-const upload = multer({ storage });
 //set Port
 const PORT = process.env.PORT || 4000;
 
-
 //create mongoose connection
-mongoose.connect(process.env.MONGO_URI,{useNewUrlParser: true}, () => {
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true }, () => {
   console.log("connection established ....... with mongo");
 });
 
 //image checker middleware
-function imageStore(req, res, next) {
-  console.log(req.url);
-  if (req.file) {
-    req.body.image=`https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/images/${req.file.filename}`
+async function imageStore(req, res, next) {
+  console.log(req.files);
+  if (req.files) {
+    let image = new ImagesCollection({
+      filename: `${Date.now()}_${req.files.image.name}}`,
+      file: {
+        data: req.files.image.data,
+        contentType: req.files.image.mimetype,
+      },
+    });
+    await image.save();
+    req.body.image = `https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/images/${image.filename}`;
     next();
   } else {
     next();
@@ -66,10 +58,10 @@ function imageStore(req, res, next) {
 //index route
 app.use("/", indexRoute);
 //users route
-app.use("/users", upload.single("image"),imageStore, usersRoute);
+app.use("/users", imageStore, usersRoute);
 
 //records route
-app.use("/blogs",upload.single("image"),imageStore, blogsRoute);
+app.use("/blogs", imageStore, blogsRoute);
 
 //orders route
 app.use("/comments", commentsRoute);
@@ -79,12 +71,17 @@ app.get("/verifytoken", authentication, (req, res, next) => {
   console.log(req.user);
   res.send({ success: true, data: user });
 });
-app.get("/images/:filename",(req,res,next)=>{
-  let ImageBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-    bucketName: process.env.DB_BUCKET,
-  });
-    ImageBucket.openDownloadStreamByName(req.params.filename).pipe(res)
-})
+app.get("/images/:filename", async (req, res, next) => {
+  try{
+     const image= await ImagesCollection.findOne({filename:req.params.filename})
+
+    const readStream = stream.Readable.from(image.file.data)
+    readStream.pipe(res)
+  }catch(err){
+    next(err)
+  }
+ 
+});
 
 //handling 404 page not
 app.use((req, res, next) => {
