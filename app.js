@@ -20,7 +20,7 @@ app.use(fileUpload());
 //cors middleware
 app.use(
   cors({
-    origin: "https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/",
+    origin: "https://blogs-app-server.vercel.app/",
     exposedHeaders: ["token"],
   })
 );
@@ -46,7 +46,7 @@ async function imageStore(req, res, next) {
       },
     });
     await image.save();
-    req.body.image = `https://blogs-app-server-ee6hmjzw3-nrcool.vercel.app/images/${image.filename}`;
+    req.body.image = `https://blogs-app-server.vercel.app/images/${image.filename}`;
     next();
   } else {
     next();
