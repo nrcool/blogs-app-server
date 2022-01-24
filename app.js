@@ -20,7 +20,7 @@ app.use(fileUpload());
 //cors middleware
 app.use(
   cors({
-    origin: "https://blogs-app-server.vercel.app/",
+    origin: "http://localhost:3000",
     exposedHeaders: ["token"],
   })
 );
