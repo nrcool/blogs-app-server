@@ -13,14 +13,16 @@ const cookieParser = require("cookie-parser");
 const authentication = require("./middlewares/auth");
 const fileUpload = require("express-fileupload");
 const stream = require("stream")
+const path=require("path")
 //express middleware to parsing json data
 app.use(express.json());
+app.use(express.static(path.resolve(__dirname,"views/public")))
 app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload());
 //cors middleware
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
     exposedHeaders: ["token"],
   })
 );
