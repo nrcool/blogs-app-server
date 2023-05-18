@@ -31,11 +31,10 @@ router.get("/",authentication,roleCheck, async (req, res, next) => {
 
 //Create new User / register
 router.post("/" , validationMiddlewares  , async (req, res, next) => {
-  console.log(req.file)
-  console.log(req.body)
+ 
   try {
     const hashPassword = bcrypt.hashSync(req.body.password, 10);
-    console.log(hashPassword);
+ 
     const user = new UsersCollection({ ...req.body, password: hashPassword });
     await user.save();
     res.json({ success: true, data: user });
@@ -61,7 +60,7 @@ router.put("/:id",authentication ,roleCheck, async (req, res, next) => {
 
 //Patch
 router.patch("/:id",authentication ,roleCheck, async (req, res, next) => {
-  console.log(req.body);
+ 
   try {
     const user = await UsersCollection.findByIdAndUpdate(req.params.id,req.body,{new:true});
     user.save();
@@ -101,14 +100,12 @@ router.post("/login",async (req,res,next)=>{
   //authentication
   const {email, password} =req.body
   const user = await UsersCollection.findOne({email:email})
-  console.log(user)
   if(user){
     const check = bcrypt.compareSync(password , user.password)
-    console.log(check)
+   
     if(check){
       const token = jwt.sign({email:email, id:user._id},process.env.SECRET_KEY,{expiresIn:"24h",issuer:"Naqvi",audience:"fbw-e04-2"} )
 
-      console.log(token)
       user.token= token;
       await user.save()
       

@@ -4,7 +4,6 @@ const router = express.Router();
 const BlogsCollection= require("../models/BlogsSchema");
 const UsersCollection = require("../models/UsersSchema");
 const { roleCheck } = require("../middlewares/RoleMiddleware");
-const { populate } = require("../models/UsersSchema");
 /* const data = fs.readFileSync(path.resolve(__dirname, "../models/db.json"),"utf-8")
 
 console.log(JSON.parse(data))

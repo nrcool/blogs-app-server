@@ -10,7 +10,7 @@ const userSchema = new Schema( {
   password: { type: String, required: true },
   token:{type:String},
   image: {type: String,default:function(){
-    return `https://joeschmoe.io/api/v1/${this.lastname}`
+    return `https://avatars.dicebear.com/api/bottts/${this.firstName}.svg`
   }},
   role:{type:String,enum:["user","admin"],default:"user"},
   blogs:[{ type: mongoose.Schema.Types.ObjectId, ref: "blogs" }],

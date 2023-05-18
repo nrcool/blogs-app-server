@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const morgan = require("morgan")
 require("dotenv").config();
 //create express server
 const app = express();
@@ -12,11 +13,11 @@ const ImagesCollection = require("./models/ImageSchema");
 const cookieParser = require("cookie-parser");
 const authentication = require("./middlewares/auth");
 const fileUpload = require("express-fileupload");
-const stream = require("stream")
-const path=require("path")
+const stream = require("stream");
+const path = require("path");
 //express middleware to parsing json data
 app.use(express.json());
-app.use(express.static(path.resolve(__dirname,"views/public")))
+app.use(express.static(path.resolve(__dirname, "views/public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload());
 //cors middleware
@@ -28,6 +29,7 @@ app.use(
 );
 app.use(cookieParser());
 
+app.use(morgan("dev"))
 //set Port
 const PORT = process.env.PORT || 4000;
 
@@ -38,10 +40,10 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true }, () => {
 
 //image checker middleware
 async function imageStore(req, res, next) {
-  console.log(req.files);
+ 
   if (req.files) {
     let image = new ImagesCollection({
-      filename: `${Date.now()}_${req.files.image.name}}`,
+      filename: `${Date.now()}_${req.files.image.name}`,
       file: {
         data: req.files.image.data,
         contentType: req.files.image.mimetype,
@@ -70,19 +72,19 @@ app.use("/comments", commentsRoute);
 
 app.get("/verifytoken", authentication, (req, res, next) => {
   const user = req.user;
-  console.log(req.user);
   res.send({ success: true, data: user });
 });
 app.get("/images/:filename", async (req, res, next) => {
-  try{
-     const image= await ImagesCollection.findOne({filename:req.params.filename})
+  try {
+    const image = await ImagesCollection.findOne({
+      filename: req.params.filename,
+    });
 
-    const readStream = stream.Readable.from(image.file.data)
-    readStream.pipe(res)
-  }catch(err){
-    next(err)
+    const readStream = stream.Readable.from(image.file.data);
+    readStream.pipe(res);
+  } catch (err) {
+    next(err);
   }
- 
 });
 
 //handling 404 page not
